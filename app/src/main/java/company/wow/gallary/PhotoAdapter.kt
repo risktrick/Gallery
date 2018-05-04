@@ -20,7 +20,7 @@ class PhotoAdapter(val allUrls: MutableList<UnsplashModel>, val context: Context
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         var myViewHolder = holder as MyViewHolder
-        myViewHolder.show(allUrls.get(position).urls.small)
+        myViewHolder.show(allUrls.get(position).urls.regular)
     }
 
 
