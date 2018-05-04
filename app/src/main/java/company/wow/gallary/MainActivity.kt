@@ -14,12 +14,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        val apiService = GithubApi.Factory.create();
-        apiService.search("miha-x64")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer { t ->  Log.e("aaa", "" + t.toString())})
-
         val unsplashhApi = UnsplashhApi.Factory.create();
         unsplashhApi.search("39de03d8e03ddc8a583ee15227635acc30f176e6912566f49ba122fabd6829d4", 1, 1)
                 .subscribeOn(Schedulers.io())

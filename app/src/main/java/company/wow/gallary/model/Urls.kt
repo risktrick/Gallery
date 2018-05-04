@@ -1,4 +1,4 @@
-package company.wow.gallary
+package company.wow.gallary.model
 
 
 data class Urls(
