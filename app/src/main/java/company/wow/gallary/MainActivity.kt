@@ -1,23 +1,47 @@
 package company.wow.gallary
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.util.Log
-import io.reactivex.android.schedulers.AndroidSchedulers
+import company.wow.gallary.model.UnsplashModel
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    var disposable: Disposable? = null
+    var allUrls: MutableList<UnsplashModel> = ArrayList()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var gridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        gridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        recyclerViewGallery.layoutManager = gridLayoutManager
+        recyclerViewGallery.adapter = PhotoAdapter(allUrls, this)
+    }
 
-        val unsplashhApi = UnsplashhApi.Factory.create();
-        unsplashhApi.search("39de03d8e03ddc8a583ee15227635acc30f176e6912566f49ba122fabd6829d4", 1, 1)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer { t ->  Log.e("aaa", "" + t.toString())})
+
+    override fun onStart() {
+        super.onStart()
+
+        disposable = Repository().getPhotos()
+                ?.subscribe(Consumer {
+                    allUrls.addAll(it)
+                    recyclerViewGallery.adapter.notifyDataSetChanged()
+                    for (unsplashModel in it) {
+                        Log.e("aaa", "" + unsplashModel.urls.small)
+                    }
+                })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        disposable?.dispose()
     }
 }
