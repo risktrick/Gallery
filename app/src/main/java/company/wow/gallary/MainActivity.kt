@@ -3,7 +3,6 @@ package company.wow.gallary
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.util.Log
 import company.wow.gallary.model.UnsplashModel
@@ -21,15 +20,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var COLUMN_COUNT = 0
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            COLUMN_COUNT = 3
-        } else {
-            COLUMN_COUNT = 2
+        var spanCount = 0
+        when {
+            getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE -> spanCount = 3
+            else -> spanCount = 2
         }
 
-        var gridLayoutManager = StaggeredGridLayoutManager(COLUMN_COUNT, StaggeredGridLayoutManager.VERTICAL)
-        gridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        var gridLayoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
+        gridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
         recyclerViewGallery.layoutManager = gridLayoutManager
         recyclerViewGallery.adapter = PhotoAdapter(allUrls, this)
     }
