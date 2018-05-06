@@ -1,5 +1,6 @@
-package company.wow.gallary
+package company.wow.gallary.repository
 
+import company.wow.gallary.Constants
 import company.wow.gallary.model.UnsplashModel
 import io.reactivex.Observable
 

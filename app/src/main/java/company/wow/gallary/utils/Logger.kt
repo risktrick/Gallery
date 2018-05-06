@@ -1,6 +1,7 @@
-package company.wow.gallary
+package company.wow.gallary.utils
 
 import android.util.Log
+import company.wow.gallary.BuildConfig
 
 class Logger {
     companion object {

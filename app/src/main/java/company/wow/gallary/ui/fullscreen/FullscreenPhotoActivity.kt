@@ -1,11 +1,11 @@
-package company.wow.gallary
+package company.wow.gallary.ui.fullscreen
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
+import company.wow.gallary.R
 import company.wow.gallary.model.UnsplashModel
-import kotlinx.android.synthetic.main.activity_fullscreen_photo.*
 
 class FullscreenPhotoActivity : AppCompatActivity() {
 
