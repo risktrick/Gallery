@@ -11,8 +11,6 @@ import kotlinx.android.synthetic.main.photo_item.view.*
 
 class PhotoAdapter(val allUrls: MutableList<UnsplashModel>, val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var onLoadMoreListener: OnLoadMoreListener? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MyViewHolder(LayoutInflater.from(context).inflate(R.layout.photo_item, parent, false))
     }
@@ -23,14 +21,8 @@ class PhotoAdapter(val allUrls: MutableList<UnsplashModel>, val context: Context
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         var myViewHolder = holder as MyViewHolder
-        myViewHolder.show(allUrls.get(position).urls.regular)
+        myViewHolder.show(allUrls.get(position).urls.small)
     }
-
-
-    fun setOnLoadMoreListner(onLoadMoreListener: OnLoadMoreListener?) {
-        this.onLoadMoreListener = onLoadMoreListener
-    }
-
 
 
 
@@ -38,12 +30,11 @@ class PhotoAdapter(val allUrls: MutableList<UnsplashModel>, val context: Context
         val photoImg = view.photoImage
 
         fun show(url : String) {
-            Picasso.get().load(url).into(photoImg);
+            Picasso.get()
+                    .load(url)
+                    .into(photoImg)
         }
     }
 
-    interface OnLoadMoreListener{
-        fun onLoadMore()
-    }
 }
 

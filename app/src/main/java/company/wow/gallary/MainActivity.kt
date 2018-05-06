@@ -5,16 +5,17 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
-import android.util.Log
+import android.view.View
 import company.wow.gallary.model.UnsplashModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity(), PhotoAdapter.OnLoadMoreListener {
+class MainActivity : AppCompatActivity() {
 
     var disposable: Disposable? = null
     var allUrls: MutableList<UnsplashModel> = ArrayList()
@@ -37,7 +38,6 @@ class MainActivity : AppCompatActivity(), PhotoAdapter.OnLoadMoreListener {
         //gridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
         recyclerViewGallery.layoutManager = gridLayoutManager
         photoAdapter = PhotoAdapter(allUrls, this)
-        photoAdapter.setOnLoadMoreListner(this);
 
         val loadMoreSubject = PublishSubject.create<Int>()
 
@@ -46,13 +46,11 @@ class MainActivity : AppCompatActivity(), PhotoAdapter.OnLoadMoreListener {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val lastVisibleItems = null
-                var lastVisibleItemss = gridLayoutManager.findLastVisibleItemPositions(lastVisibleItems)
+                var lastVisibleItemss = gridLayoutManager.findLastVisibleItemPositions(null)
 
-                lastVisibleItemss.forEach { i ->
-                    if (i == allUrls.size - 1 ) {
-                        Logger.log("onScrolled to the last item = $i")
-                        loadMoreSubject.onNext(i)
+                lastVisibleItemss.forEach {
+                    when (it) {
+                        allUrls.size - 1 -> loadMoreSubject.onNext(it)
                     }
                 }
 
@@ -61,18 +59,25 @@ class MainActivity : AppCompatActivity(), PhotoAdapter.OnLoadMoreListener {
 
 
         loadMoreSubject.debounce(100, TimeUnit.MILLISECONDS)
-                .flatMap { t ->  repository.getPhotos(++pageNumber)}
-                .subscribe(Consumer {
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext({showLoadProgress(true)})
+                .observeOn(Schedulers.io())
+                .flatMap { t -> repository.getPhotos(++pageNumber)}
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
                     allUrls.addAll(it)
-                    //val firstInsertedPosition = allUrls.size - it.size - 1
-                    //val lastInstertedPosition = allUrls.size - 1
-                    //recyclerViewGallery.adapter.notifyItemRangeInserted(firstInsertedPosition, lastInstertedPosition)
-                    recyclerViewGallery.adapter.notifyDataSetChanged()
+
+                    val firstInsertedPosition = allUrls.size - it.size
+                    val lastInstertedPosition = allUrls.size - 1
+                    recyclerViewGallery.adapter.notifyItemRangeInserted(firstInsertedPosition, lastInstertedPosition)
+
                     Logger.log("new items:")
                     for (unsplashModel in it) {
                         Logger.log(unsplashModel.urls.small)
                     }
-                })
+
+                    showLoadProgress(false)
+                }, { t -> Logger.log(t.toString()) })
     }
 
 
@@ -80,7 +85,9 @@ class MainActivity : AppCompatActivity(), PhotoAdapter.OnLoadMoreListener {
         super.onStart()
 
         disposable = repository.getPhotos(1)
-                ?.subscribe(Consumer {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(Consumer {
                     allUrls.addAll(it)
                     recyclerViewGallery.adapter.notifyDataSetChanged()
                     Logger.log("new items:")
@@ -93,10 +100,12 @@ class MainActivity : AppCompatActivity(), PhotoAdapter.OnLoadMoreListener {
     override fun onStop() {
         super.onStop()
         disposable?.dispose()
-        photoAdapter.setOnLoadMoreListner(null);
     }
 
-    override fun onLoadMore() {
-
+    fun showLoadProgress(visible: Boolean) {
+        when {
+            visible -> loadProgressBar.visibility= View.VISIBLE
+            else -> loadProgressBar.visibility= View.GONE
+        }
     }
 }
