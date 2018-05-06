@@ -1,5 +1,7 @@
 package company.wow.gallary.model
 
+import java.io.Serializable
+
 
 data class User(
         val id: String,
@@ -18,4 +20,4 @@ data class User(
         val instagram_username: String,
         val total_likes: Int,
         val total_photos: Int
-)
+) : Serializable

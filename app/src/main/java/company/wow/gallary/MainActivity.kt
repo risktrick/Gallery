@@ -1,5 +1,6 @@
 package company.wow.gallary
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -13,6 +14,7 @@ import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -35,13 +37,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         var gridLayoutManager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
-        //gridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
         recyclerViewGallery.layoutManager = gridLayoutManager
         photoAdapter = PhotoAdapter(allUrls, this)
+        photoAdapter.setOnCardClickListner(object : PhotoAdapter.OnImgClickListener{
+            override fun onImgClick(model: UnsplashModel) {
+                var intent = Intent(applicationContext, FullscreenPhotoActivity::class.java)
+                intent.putExtra(FullscreenPhotoActivity.PARAM_MODEL, model as Serializable)
+                startActivity(intent)
+            }
+        })
+        recyclerViewGallery.adapter = photoAdapter
+
 
         val loadMoreSubject = PublishSubject.create<Int>()
-
-        recyclerViewGallery.adapter = photoAdapter
         recyclerViewGallery.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

@@ -1,5 +1,7 @@
 package company.wow.gallary.model
 
+import java.io.Serializable
+
 
 data class Urls(
     val raw: String,
@@ -7,4 +9,4 @@ data class Urls(
     val regular: String,
     val small: String,
     val thumb: String
-)
+) : Serializable

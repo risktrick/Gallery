@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Gallary</string>
+
+    <string name="title_activity_fullscreen_photo">FullscreenPhotoActivity</string>
 </resources>

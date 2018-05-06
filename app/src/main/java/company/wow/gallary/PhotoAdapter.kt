@@ -11,6 +11,8 @@ import kotlinx.android.synthetic.main.photo_item.view.*
 
 class PhotoAdapter(val allUrls: MutableList<UnsplashModel>, val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private lateinit var onImgClickListener: OnImgClickListener
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MyViewHolder(LayoutInflater.from(context).inflate(R.layout.photo_item, parent, false))
     }
@@ -22,12 +24,23 @@ class PhotoAdapter(val allUrls: MutableList<UnsplashModel>, val context: Context
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         var myViewHolder = holder as MyViewHolder
         myViewHolder.show(allUrls.get(position).urls.small)
+        myViewHolder.photoImg.setOnClickListener({onImgClickListener.onImgClick(allUrls.get(position))})
+    }
+
+
+    fun setOnCardClickListner(onImgClickListener: OnImgClickListener) {
+        this.onImgClickListener = onImgClickListener
     }
 
 
 
+    interface OnImgClickListener {
+        fun onImgClick(get: UnsplashModel)
+    }
+
+
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val photoImg = view.photoImage
+        val photoImg = view.photo_image
 
         fun show(url : String) {
             Picasso.get()

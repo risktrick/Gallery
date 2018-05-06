@@ -6,7 +6,7 @@
     android:layout_margin="5dp">
 
     <ImageView
-        android:id="@+id/photoImage"
+        android:id="@+id/photo_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:src="@mipmap/ic_launcher"/>

@@ -1,5 +1,7 @@
 package company.wow.gallary.model
 
+import java.io.Serializable
+
 
 data class Links(
     val self: String,
@@ -9,4 +11,4 @@ data class Links(
     val portfolio: String,
     val following: String,
     val followers: String
-)
+) : Serializable

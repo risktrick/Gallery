@@ -10,9 +10,9 @@ import retrofit2.http.Query
 
 interface UnsplashhApi {
     @GET("photos/")
-    fun search(@Query("client_id") query: String,
-                @Query("page") page: Int,
-                @Query("per_page") perPage: Int): Observable<List<UnsplashModel>>
+    fun photos(@Query("client_id") query: String,
+               @Query("page") page: Int,
+               @Query("per_page") perPage: Int): Observable<List<UnsplashModel>>
 
     companion object Factory {
         fun create(): UnsplashhApi {

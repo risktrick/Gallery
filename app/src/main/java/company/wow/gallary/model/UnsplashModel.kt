@@ -1,8 +1,9 @@
 package company.wow.gallary.model
 
+import java.io.Serializable
 
 
-data class UnsplashModel(
+data class UnsplashModel (
         val id: String,
         val created_at: String,
         val updated_at: String,
@@ -19,4 +20,4 @@ data class UnsplashModel(
         val current_user_collections: List<Any>,
         val slug: Any,
         val user: User
-)
+) : Serializable
